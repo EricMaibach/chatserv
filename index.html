@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Chat Example</title>
+<script type="text/javascript">
+window.onload = function () {
+    var conn;
+    var msg = document.getElementById("msg");
+    var log = document.getElementById("log");
+
+    document.getElementById("form").onsubmit = function () {
+        if (!conn) {
+            return false;
+        }
+        if (!msg.value) {
+            return false;
+        }
+        conn.send(msg.value);
+        msg.value = "";
+        return false;
+    };
+
+    if (window["WebSocket"]) {
+        conn = new WebSocket("ws://" + document.location.host + "/ws");
+        conn.onclose = function (evt) {
+            log.innerHTML = log.innerHTML + "Connection closed";
+        };
+        conn.onmessage = function (evt) {
+            log.innerHTML = log.innerHTML + evt.data
+        };
+    } else {
+        log.innerHTML = log.innerHTML + "Your browser does not support WebSockets"
+    }
+};
+</script>
+</head>
+<body>
+<div id="log"></div>
+<form id="form">
+    <input type="text" id="msg" size="64"/>
+    <input type="submit" value="Send" />
+</form>
+</body>
+</html>
